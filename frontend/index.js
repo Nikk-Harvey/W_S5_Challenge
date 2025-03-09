@@ -9,18 +9,8 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   // ❗ Use the variables `mentors` and `learners` to store the data.
   // ❗ Use the await keyword when using axios.
 
-  let mentors = []; // fix this
-  let learners = []; // fix this
-
-Promise.all([
-    axios.get("http://localhost:3003/api/learners"),
-    axios.get("http://localhost:3003/api/mentors")
-  ])
-
-    .then(([learnersResponse, mentorsResponse]) => {
-      learners = learnersResponse.data;
-      mentors = mentorsResponse.data;
-
+ let { data: mentors } = await axios.get('http://localhost:3003/api/mentors');
+  let { data: learners } = await axios.get('http://localhost:3003/api/learners');
   
   // 👆 ==================== TASK 1 END ====================== 👆
 
@@ -38,18 +28,9 @@ Promise.all([
   //     "Grace Hopper"
   //   ]`
   // }
-      learners.forEach((learner) => {
-        learner.mentors = learner.mentors.map((mentorsId) => {
-          const mentor = mentors.find((mentors) => mentors.id === mentorsId);
-          return mentor ? `${mentor.firstName} ${mentor.lastName}` : null;
-        }).filter(Boolean);
-      });
+      let { data: mentors } = await axios.get('http://localhost:3003/api/mentors');
+  let { data: learners } = await axios.get('http://localhost:3003/api/learners');
 
-      console.log(learners);
-    })
-    .catch((error) => {
-      console.log("Error loading data:", error);
-    });
 
   // 👆 ==================== TASK 2 END ====================== 👆
 
@@ -60,7 +41,7 @@ Promise.all([
 
   // 👇 ==================== TASK 3 START ==================== 👇
 
-  for (let learner of learners) { // looping over each learner object
+  for (let learner of combinedData) { // looping over each learner object
 
     // 🧠 Flesh out the elements that describe each learner
     // ❗ Give the elements below their (initial) classes, textContent and proper nesting.
@@ -70,11 +51,11 @@ Promise.all([
     // ❗ Inspect the mock site closely to understand what the initial texts and classes look like!
 
     const card = document.createElement('div');
-    card.classList.add('learner-card');
+    card.classList.add('card');
 
     const heading = document.createElement('h3');
     heading.classList.add('learner-name');
-    heading.textContent = learner.name;
+    heading.textContent = learner.fullName;
 
     const email = document.createElement('div');
     email.classList.add('learner-email');
@@ -88,19 +69,17 @@ Promise.all([
     mentorsList.classList.add('mentors-list');
 
     for (let mentor of learner.mentors) {
-      const mentorItem = document.createElement('li');
+      let mentorItem = document.createElement('li');
       mentorItem.classList.add('mentor');
-      mentorItem.textContent = mentor.name;
+      mentorItem.textContent = mentor; // use mentor name here
       mentorsList.appendChild(mentorItem);
     }
+  
 
     card.appendChild(heading);
     card.appendChild(email);
     card.appendChild(mentorsHeading);
     card.appendChild(mentorsList);
-
-    cardsContainer.appendChild(card);
-    document.body.cards.appendChild(cardsContainer);
 
     // 👆 ==================== TASK 3 END ====================== 👆
 
