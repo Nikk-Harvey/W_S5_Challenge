@@ -28,15 +28,20 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   //     "Grace Hopper"
   //   ]`
   // }
-      let { data: mentors } = await axios.get('http://localhost:3003/api/mentors');
-  let { data: learners } = await axios.get('http://localhost:3003/api/learners');
+      let combinedData = learners.map(learner => {
+    const m = mentors.filter(mentor => learner.mentors.includes(mentor.id))
+    return {
+      ...learner,
+      mentors: m.map(mentor => `${mentor.firstName} ${mentor.lastName}`)
+    }
+  });
 
 
   // 👆 ==================== TASK 2 END ====================== 👆
 
-  const cardsContainer = document.querySelector('.cards')
-  const info = document.querySelector('.info')
-  info.textContent = 'No learner is selected'
+  const cardsContainer = document.querySelector('.cards');
+  const info = document.querySelector('.info');
+  info.textContent = 'No learner is selected';
 
 
   // 👇 ==================== TASK 3 START ==================== 👇
@@ -64,9 +69,11 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
     const mentorsHeading = document.createElement('h4');
     mentorsHeading.classList.add('mentors-heading');
     mentorsHeading.textContent = 'Mentors:';
+    mentorsHeading.classList.add('closed');
 
     const mentorsList = document.createElement('ul');
     mentorsList.classList.add('mentors-list');
+
 
     for (let mentor of learner.mentors) {
       let mentorItem = document.createElement('li');
@@ -80,6 +87,10 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
     card.appendChild(email);
     card.appendChild(mentorsHeading);
     card.appendChild(mentorsList);
+    
+  
+
+    
 
     // 👆 ==================== TASK 3 END ====================== 👆
 
